@@ -5,7 +5,7 @@ A Hackey CLI solver for wordle
 Run as follows: 
 
 1. `clone git repo`
-2. `npm init`
+2. `npm install`
 3. `node dictionary_process.js`
 
 It will give you a suggested guess, and prompt you to tell it what you guessed e.g. irate and the score e.g. 12000 (0=Black, 1=Yellow, 2=Green)
