@@ -1,43 +1,37 @@
 let fs = require('fs');
 let prompt = require('prompt-sync') ({sigint: true});
 
-let wordarray = fs.readFileSync('words_alpha.txt').toString().split("\n").filter(x => x.trim().length === 5);
+let wordarray = fs.readFileSync('words_alpha.txt').toString().split("\r\n").filter(x => x.trim().length === 5);
+let totalfrequency = {}
 
-for (i in wordarray){
-    wordarray[i] = wordarray[i].replace('\r','');
-}
+function getFrequency(string) {
+    var freq = [];
+    for (var i=0; i<string.length;i++) {
+        var character = string.charAt(i);
+        var elementIndex = freq.findIndex((obj) => obj.Letter === character);
+        if (elementIndex == -1){
+            freq.push({"Letter": character, "Total": 1})
+        } else {
+            freq[elementIndex].Total++;
+        }
 
-function scoreword(word) {
+    }
 
-    //TODO Parse disctionary and work out scores
-    let letterscores = [
-        {Letter: 'e', Score: 26},
-        {Letter: 'a', Score: 25},
-        {Letter: 'r', Score: 24},
-        {Letter: 'i', Score: 23},
-        {Letter: 'o', Score: 22},
-        {Letter: 't', Score: 21},
-        {Letter: 'n', Score: 20},
-        {Letter: 's', Score: 19},
-        {Letter: 'l', Score: 18},
-        {Letter: 'c', Score: 17},
-        {Letter: 'u', Score: 16},
-        {Letter: 'd', Score: 15},
-        {Letter: 'p', Score: 14},
-        {Letter: 'm', Score: 13},
-        {Letter: 'h', Score: 12},
-        {Letter: 'g', Score: 11},
-        {Letter: 'b', Score: 10},
-        {Letter: 'f', Score: 9},
-        {Letter: 'y', Score: 8},
-        {Letter: 'w', Score: 7},
-        {Letter: 'k', Score: 6},
-        {Letter: 'v', Score: 5},
-        {Letter: 'x', Score: 4},
-        {Letter: 'z', Score: 3},
-        {Letter: 'j', Score: 2},
-        {Letter: 'q', Score: 1}
-    ]
+     freq.sort((a,b) => a.Total - b.Total  );
+
+     var count = 0; 
+     for (x in freq){
+         count++;
+         freq[x].Score = count;
+     }
+
+     return freq
+    };
+
+
+    totalfrequency = getFrequency(wordarray.join(''))
+
+function scoreword(word, letterscores) {
 
     let score = 0;
 
@@ -50,7 +44,7 @@ function scoreword(word) {
     return score
 }
 
-wordarray.sort((a,b) => scoreword(b.trim()) - scoreword(a.trim())  )
+wordarray.sort((a,b) => scoreword(b.trim(),totalfrequency) - scoreword(a.trim(),totalfrequency)  )
 
 let wordarraynodupes = wordarray.filter(x => !hasduplicatedchars(x));
 
@@ -66,7 +60,7 @@ function hasduplicatedchars(word){
     return false
 }
 
-console.log("Starting Word:", wordarraynodupes[0], wordarraynodupes[1], wordarraynodupes[2]);
+console.log("Starting Words:", wordarraynodupes[0], wordarraynodupes[1], wordarraynodupes[2]);
 
 let score = 0
 
@@ -81,20 +75,6 @@ let word = prompt('What was your word?: ');
  score = prompt('What was the score?: ');
 
 
-
- function getFrequency(string) {
-    var freq = {};
-    for (var i=0; i<string.length;i++) {
-        var character = string.charAt(i);
-        if (freq[character]) {
-               freq[character]++;
-        } else {
-               freq[character] = 1;
-        }
-    }
-
-        return freq;
-    };
 
  //TODO loop through scores and adjust score to 1 if the letter is repeated and has zero score
 function adjustscore(word, score) {
@@ -167,7 +147,7 @@ filter = updatefilters(word,score,filter);
 function filterwordarray(wordarray,filter){
 
    wordarray = wordarray.filter(word => checkfilters(word,filter));
-   wordarray.sort((a,b) => scoreword(b.trim()) - scoreword(a.trim())  )
+   wordarray.sort((a,b) => scoreword(b.trim(),totalfrequency) - scoreword(a.trim(),totalfrequency)  )
    return wordarray;
 }
 
