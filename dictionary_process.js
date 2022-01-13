@@ -18,11 +18,12 @@ function getFrequency(string) {
     }
 
      freq.sort((a,b) => a.Total - b.Total  );
-
      var count = 0; 
-     for (x in freq){
+     for (let x in freq){
          count++;
+         //TODO which is better?!?
          freq[x].Score = count;
+         //freq[x].Score = freq[x].Total;
      }
 
      return freq
@@ -31,11 +32,12 @@ function getFrequency(string) {
 
     totalfrequency = getFrequency(wordarray.join(''))
 
+    
 function scoreword(word, letterscores) {
 
     let score = 0;
 
-    for (i in word)
+    for (let i in word)
     {
         let currentletter = letterscores.find(({Letter,Score}) => Letter === word[i]);
         score += currentletter.Score;
@@ -50,7 +52,7 @@ let wordarraynodupes = wordarray.filter(x => !hasduplicatedchars(x));
 
 function hasduplicatedchars(word){
     
-    for (i in word){
+    for (let i in word){
         if (word.indexOf(word[i]) !== word.lastIndexOf(word[i])){
 
             return true
@@ -64,11 +66,13 @@ console.log("Starting Words:", wordarraynodupes[0], wordarraynodupes[1], wordarr
 
 let score = 0
 
-let filter = [['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'],
+let negativefilter = [['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'],
               ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'],
               ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'],
               ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'],
               ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']]
+
+              let guaranteedletters = [];
 
 do {
 let word = prompt('What was your word?: ');
@@ -111,9 +115,9 @@ if (score != '22222'){
 score = adjustscore(word, score)
 }
 
-function updatefilters(word,score,filter){
+function updatefilters(word,score,filter,guaranteedletters){
 
-    for (i in word) {
+    for (let i in word) {
         if (score[i] == 0){
           //remove letter from all arrays which have length > 1
           
@@ -131,28 +135,30 @@ function updatefilters(word,score,filter){
         if (score[i] == 1){
           // Remove the letter from that box but not from any others
           filter[i] = filter[i].filter(x => x != word[i])
- 
+
+          guaranteedletters.push(word[i]);
         }
         if (score[i] == 2){
           //set filter equal to  letter 
           filter[i] = [word[i]];
+          guaranteedletters.push(word[i]);
+
         }
       }
-      
-      return filter;
+      return filter, guaranteedletters;
 }
 
-filter = updatefilters(word,score,filter);
+negativefilter, guaranteedletters = updatefilters(word,score,negativefilter, guaranteedletters);
 
 function filterwordarray(wordarray,filter){
 
    wordarray = wordarray.filter(word => checkfilters(word,filter));
-   wordarray.sort((a,b) => scoreword(b.trim(),totalfrequency) - scoreword(a.trim(),totalfrequency)  )
+   
    return wordarray;
 }
 
 function checkfilters(word,filter){ 
-        for (letter in word) {  
+        for (let letter in word) {  
             if (filter[letter].indexOf(word[letter]) == -1)
             return false
         }
@@ -160,9 +166,14 @@ function checkfilters(word,filter){
     
 }
 
+wordarray = filterwordarray(wordarray, negativefilter);
+wordarray = wordarray.filter(word => guaranteedletters.every(letter => word.includes(letter)))
+console.log(wordarray);
+totalfrequency = getFrequency(wordarray.join(''))
+wordarray.sort((a,b) => scoreword(b.trim(),totalfrequency) - scoreword(a.trim(),totalfrequency)  )
 
 
-wordarray = filterwordarray(wordarray, filter);
+
 console.log ("Next Guess: ", wordarray[0], wordarray[1], wordarray[2])
 }
 while (score != 22222)
