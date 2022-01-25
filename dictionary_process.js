@@ -1,7 +1,8 @@
 let fs = require('fs');
 let prompt = require('prompt-sync') ({sigint: true});
 
-let wordarray = fs.readFileSync('words_cheat.txt').toString().split("\r\n").filter(x => x.trim().length === 5);
+let wordarray = fs.readFileSync('words_alpha.txt').toString().split("\r\n").filter(x => x.trim().length === 5);
+let cheatarray = fs.readFileSync('words_cheat.txt').toString().split("\r\n").filter(x => x.trim().length === 5);
 let totalfrequency = {}
 
 function getFrequency(string) {
@@ -31,7 +32,6 @@ function getFrequency(string) {
 
 
     totalfrequency = getFrequency(wordarray.join(''))
-
     
 function scoreword(word, letterscores) {
 
@@ -85,7 +85,7 @@ function adjustscore(word, score) {
     var newscore = [];
     let frequency = getFrequency(word);
     for (let x in word){
-        if (frequency[word[x]] > 1){
+        if (frequency.find(y => y.Letter === word[x]).Total > 1){
            if ((score[x] == 0) && (gethighestscore(word,score,word[x]) > 0)){
                newscore[x] = '1';
            } else {newscore[x] = score[x];
@@ -168,13 +168,21 @@ function checkfilters(word,filter){
 
 wordarray = filterwordarray(wordarray, negativefilter);
 wordarray = wordarray.filter(word => guaranteedletters.every(letter => word.includes(letter)))
-console.log(wordarray);
+
+cheatarray = filterwordarray(cheatarray, negativefilter);
+cheatarray = cheatarray.filter(word => guaranteedletters.every(letter => word.includes(letter)))
 totalfrequency = getFrequency(wordarray.join(''))
 wordarray.sort((a,b) => scoreword(b.trim(),totalfrequency) - scoreword(a.trim(),totalfrequency)  )
 
+let cheatfrequency = getFrequency(cheatarray.join(''))
+cheatarray.sort((a,b) => scoreword(b.trim(),cheatfrequency) - scoreword(a.trim(),cheatfrequency)  )
 
+if (cheatarray.length == 1) {
+    console.log ("Next Guess: ", cheatarray[0])
+} else {
 
-console.log ("Next Guess: ", wordarray[0], wordarray[1], wordarray[2])
+console.log ("Next Guess of ", wordarray.length, "remaining words:", wordarray[0], wordarray[1], wordarray[2])
+}
 }
 while (score != 22222)
 
