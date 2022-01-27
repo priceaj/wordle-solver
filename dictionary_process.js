@@ -8,7 +8,7 @@ let totalfrequency = {}
 totalfrequency = getFrequency(wordarray.join(''))
 wordarray.sort((a, b) => scoreword(b.trim(), totalfrequency) - scoreword(a.trim(), totalfrequency))
 let wordarraynodupes = wordarray.filter(x => !hasduplicatedchars(x));
-console.log("Starting Words:", wordarraynodupes[0], wordarraynodupes[1], wordarraynodupes[2]);
+console.log("Starting Words of", wordarray.length, "remaining words:", wordarraynodupes[0], wordarraynodupes[1], wordarraynodupes[2]);
 
 let score = 0
 let guaranteedletters = [];
@@ -138,14 +138,12 @@ function updatefilters(word, score, filter, guaranteedletters) {
         if (score[i] == 1) {
             // Remove the letter from that box but not from any others
             filter[i] = filter[i].filter(x => x != word[i])
-
-            guaranteedletters.push(word[i]);
+            
         }
         if (score[i] == 2) {
             //set filter equal to  letter 
             filter[i] = [word[i]];
-            guaranteedletters.push(word[i]);
-
+            if (!guaranteedletters.includes(word[i])){guaranteedletters.push(word[i])}
         }
     }
     return filter, guaranteedletters;
