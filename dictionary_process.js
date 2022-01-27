@@ -157,7 +157,10 @@ function adjustscore(word, score) {
     let frequency = getFrequency(word);
     for (let x in word) {
         if (frequency.find(y => y.Letter === word[x]).Total > 1) {
-            if ((score[x] == 0) && (gethighestscore(word, score, word[x]) > 0)) {
+            // Originally gethighestscore > 0, however I believe this should be == 1
+            // if there is is a correctly placed letter with a duplicate
+            // wordle should give you a correct score for the second letter 
+            if ((score[x] == 0) && (gethighestscore(word, score, word[x]) == 1)) {
                 newscore[x] = '1';
             } else {
                 newscore[x] = score[x];
