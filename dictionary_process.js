@@ -6,7 +6,6 @@ let cheatarray = fs.readFileSync('words_cheat.txt').toString().split("\r\n").fil
 let totalfrequency = []
 
 totalfrequency = getArrayFrequency(wordarray)
-console.log(totalfrequency)
 wordarray.sort((a, b) => scoreword(b.trim(), totalfrequency) - scoreword(a.trim(), totalfrequency))
 let wordarraynodupes = wordarray.filter(x => !hasduplicatedchars(x));
 console.log("Starting Words of", wordarray.length, "remaining words:", wordarraynodupes[0], wordarraynodupes[1], wordarraynodupes[2]);
