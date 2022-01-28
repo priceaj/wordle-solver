@@ -61,7 +61,7 @@ function getArrayFrequency(array){
      // i is counter for freq
      for (var i = 0; i < 5; i++){
         
-        freq[i] = getStringFrequency(wordarray.map(x => x.charAt(i)).join(''));
+        freq[i] = getStringFrequency(array.map(x => x.charAt(i)).join(''));
         
      }
      return freq
