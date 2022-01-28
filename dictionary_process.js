@@ -3,9 +3,10 @@ let prompt = require('prompt-sync')({ sigint: true });
 
 let wordarray = fs.readFileSync('words_alpha.txt').toString().split("\r\n").filter(x => x.trim().length === 5);
 let cheatarray = fs.readFileSync('words_cheat.txt').toString().split("\r\n").filter(x => x.trim().length === 5);
-let totalfrequency = {}
+let totalfrequency = []
 
-totalfrequency = getFrequency(wordarray.join(''))
+totalfrequency = getArrayFrequency(wordarray)
+console.log(totalfrequency)
 wordarray.sort((a, b) => scoreword(b.trim(), totalfrequency) - scoreword(a.trim(), totalfrequency))
 let wordarraynodupes = wordarray.filter(x => !hasduplicatedchars(x));
 console.log("Starting Words of", wordarray.length, "remaining words:", wordarraynodupes[0], wordarraynodupes[1], wordarraynodupes[2]);
@@ -33,10 +34,10 @@ do {
 
     cheatarray = filterwordarray(cheatarray, negativefilter);
     cheatarray = cheatarray.filter(word => guaranteedletters.every(letter => word.includes(letter)))
-    totalfrequency = getFrequency(wordarray.join(''))
+    totalfrequency = getArrayFrequency(wordarray)
     wordarray.sort((a, b) => scoreword(b.trim(), totalfrequency) - scoreword(a.trim(), totalfrequency))
 
-    let cheatfrequency = getFrequency(cheatarray.join(''))
+    let cheatfrequency = getArrayFrequency(cheatarray)
     cheatarray.sort((a, b) => scoreword(b.trim(), cheatfrequency) - scoreword(a.trim(), cheatfrequency))
 
     if (cheatarray.length == 1) {
@@ -55,7 +56,20 @@ while (score != '22222')
 
 console.log('Congratulations!')
 
-function getFrequency(string) {
+function getArrayFrequency(array){
+     var freq = [];
+      
+     // i is counter for freq
+     for (var i = 0; i < 5; i++){
+        
+        freq[i] = getStringFrequency(wordarray.map(x => x.charAt(i)).join(''));
+        
+     }
+     return freq
+      
+}
+
+function getStringFrequency(string) {
     var freq = [];
     for (var i = 0; i < string.length; i++) {
         var character = string.charAt(i);
@@ -78,15 +92,13 @@ function getFrequency(string) {
     return freq
 }
 
+
 function scoreword(word, letterscores) {
-
     let score = 0;
-
     for (let i in word) {
-        let currentletter = letterscores.find(({ Letter }) => Letter === word[i]);
+        let currentletter = letterscores[i].find(({ Letter }) => Letter === word[i]);
         score += currentletter.Score;
     }
-
     return score
 }
 
@@ -153,7 +165,7 @@ function updatefilters(word, score, filter, guaranteedletters) {
 //loop through scores and adjust score to 1 if the letter is repeated and has zero score
 function adjustscore(word, score) {
     var newscore = [];
-    let frequency = getFrequency(word);
+    let frequency = getStringFrequency(word);
     for (let x in word) {
         if (frequency.find(y => y.Letter === word[x]).Total > 1) {
             // Originally gethighestscore > 0, however I believe this should be == 1
