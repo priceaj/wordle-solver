@@ -138,6 +138,7 @@ function updatefilters(word, score, filter, guaranteedletters) {
         if (score[i] == 1) {
             // Remove the letter from that box but not from any others
             filter[i] = filter[i].filter(x => x != word[i])
+            if (!guaranteedletters.includes(word[i])){guaranteedletters.push(word[i])}
             
         }
         if (score[i] == 2) {
