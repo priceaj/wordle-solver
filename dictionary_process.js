@@ -8,7 +8,7 @@ let totalfrequency = []
 totalfrequency = getArrayFrequency(wordarray)
 wordarray.sort((a, b) => scoreword(b.trim(), totalfrequency) - scoreword(a.trim(), totalfrequency))
 let wordarraynodupes = wordarray.filter(x => !hasduplicatedchars(x));
-console.log("Starting Words of", wordarray.length, "remaining words:", wordarraynodupes[0], wordarraynodupes[1], wordarraynodupes[2]);
+console.log("Starting word of", wordarray.length, "remaining words:", wordarraynodupes[0], wordarraynodupes[1], wordarraynodupes[2]);
 
 let score = 0
 let guaranteedletters = [];
@@ -35,9 +35,6 @@ do {
     cheatarray = cheatarray.filter(word => guaranteedletters.every(letter => word.includes(letter)))
     totalfrequency = getArrayFrequency(wordarray)
     wordarray.sort((a, b) => scoreword(b.trim(), totalfrequency) - scoreword(a.trim(), totalfrequency))
-
-    let cheatfrequency = getArrayFrequency(cheatarray)
-    cheatarray.sort((a, b) => scoreword(b.trim(), cheatfrequency) - scoreword(a.trim(), cheatfrequency))
 
     if (cheatarray.length == 1) {
         console.log("Answer: ", cheatarray[0])
@@ -81,12 +78,14 @@ function getStringFrequency(string) {
 
     }
 
-    freq.sort((a, b) => a.Total - b.Total);
-    var count = 0;
+  //  let TotalCount = freq.reduce((Accumulator, currentValue) => Accumulator + currentValue.Total, 0);
+    let TotalCount = string.length
     for (let x in freq) {
-        count++;
-        freq[x].Score = count;
+        freq[x].Score = (freq[x].Total/TotalCount)*100;
+        
     }
+    
+    freq.sort((a, b) => a.Score - b.Score);
 
     return freq
 }
