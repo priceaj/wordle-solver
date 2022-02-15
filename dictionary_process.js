@@ -1,7 +1,7 @@
 let fs = require('fs');
 let prompt = require('prompt-sync')({ sigint: true });
 
-let wordarray = fs.readFileSync('words_alpha.txt').toString().split("\r\n").filter(x => x.trim().length === 5);
+let wordarray = fs.readFileSync('words_cheat.txt').toString().split("\r\n").filter(x => x.trim().length === 5);
 let cheatarray = fs.readFileSync('words_cheat.txt').toString().split("\r\n").filter(x => x.trim().length === 5);
 let totalfrequency = []
 
